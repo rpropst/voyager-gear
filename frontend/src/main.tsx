@@ -4,6 +4,7 @@ import './global.css'
 
 import VoyagerApp from './App'
 import { AuthProvider } from './contexts/AuthProvider'
+import { CartProvider } from './contexts/CartProvider'
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
 
@@ -16,7 +17,9 @@ import('../mocks/browser')
   .then(() => {
     root.render(
       <AuthProvider>
-        <VoyagerApp />
+        <CartProvider>
+          <VoyagerApp />
+        </CartProvider>
       </AuthProvider>,
     )
   })

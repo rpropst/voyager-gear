@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import auth, products
+from app.api.routes import auth, products, cart, shipping, promo_codes
 from app.config import settings
 from app.database import init_db
 
@@ -29,6 +29,9 @@ app.add_middleware(
 # Include routers
 app.include_router(auth.router, prefix="/api")
 app.include_router(products.router, prefix="/api")
+app.include_router(cart.router, prefix="/api")
+app.include_router(shipping.router, prefix="/api")
+app.include_router(promo_codes.router, prefix="/api")
 
 
 @app.get("/")

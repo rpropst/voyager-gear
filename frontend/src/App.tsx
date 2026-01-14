@@ -10,7 +10,9 @@ import Register from './pages/Register'
 import Account from './pages/Account'
 import Products from './pages/Products'
 import ProductDetail from './pages/ProductDetail'
+import Cart from './pages/Cart'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import MiniCart from './components/cart/MiniCart'
 
 
 const PRODUCTS = [
@@ -27,10 +29,13 @@ const Navigation = () => {
       <Link to="/" style={{ color: 'white', textDecoration: 'none', fontWeight: 'bold' }}>VOYAGER</Link>
       <Link to="/products" style={{ color: 'white', textDecoration: 'none' }}>Products</Link>
       <Link to="/search" style={{ color: 'white', textDecoration: 'none' }}>Search</Link>
-      <Link to="/cart" style={{ color: 'white', textDecoration: 'none' }}>Cart</Link>
 
-      {/* User Account Icon */}
-      <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
+      {/* User Account and Cart Icons */}
+      <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '16px' }}>
+        {/* Mini Cart */}
+        <MiniCart />
+
+        {/* User Account */}
         {isAuthenticated && user ? (
           <Link to="/account" style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -130,8 +135,8 @@ export default function VoyagerApp() {
         <Route path="/products" element={<Products />} />
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/cart" element={<div style={{padding: '40px'}}><Link to="/checkout">Proceed to Checkout</Link></div>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route

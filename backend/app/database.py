@@ -35,6 +35,6 @@ def get_db():
 
 def init_db():
     """Initialize database tables."""
-    from app.models import user  # noqa: F401
+    from app.models import user, product, cart, cart_item, saved_item, promo_code  # noqa: F401
 
     Base.metadata.create_all(bind=engine)

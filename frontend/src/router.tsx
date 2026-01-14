@@ -8,6 +8,7 @@ import Register from './pages/Register'
 import Account from './pages/Account'
 import Products from './pages/Products'
 import ProductDetail from './pages/ProductDetail'
+import Cart from './pages/Cart'
 import Notfound from './pages/Notfound'
 
 const router = createBrowserRouter([
@@ -58,6 +59,14 @@ const router = createBrowserRouter([
     element: (
       <Layout>
         <ProductDetail />
+      </Layout>
+    ),
+  },
+  {
+    path: '/cart',
+    element: (
+      <Layout>
+        <Cart />
       </Layout>
     ),
   },

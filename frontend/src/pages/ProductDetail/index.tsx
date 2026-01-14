@@ -7,14 +7,18 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { productService } from '@/services/product.service'
 import type { Product } from '@/types/product.types'
+import { useCart } from '@/hooks/useCart'
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const { addToCart } = useCart()
   const [product, setProduct] = useState<Product | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(1)
+  const [addingToCart, setAddingToCart] = useState(false)
+  const [addToCartSuccess, setAddToCartSuccess] = useState(false)
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -49,9 +53,26 @@ const ProductDetail: React.FC = () => {
       .join(' ')
   }
 
-  const handleAddToCart = () => {
-    // TODO: Implement cart functionality
-    alert(`Added ${quantity} x ${product?.name} to cart`)
+  const handleAddToCart = async () => {
+    if (!product) return
+
+    setAddingToCart(true)
+    setAddToCartSuccess(false)
+
+    try {
+      await addToCart(product.id, quantity)
+      setAddToCartSuccess(true)
+
+      // Reset success message after 3 seconds
+      setTimeout(() => {
+        setAddToCartSuccess(false)
+      }, 3000)
+    } catch (error: any) {
+      console.error('Error adding to cart:', error)
+      alert(error.message || 'Failed to add item to cart')
+    } finally {
+      setAddingToCart(false)
+    }
   }
 
   if (isLoading) {
@@ -224,10 +245,16 @@ const ProductDetail: React.FC = () => {
 
                 <button
                   onClick={handleAddToCart}
-                  className="w-full px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
+                  disabled={addingToCart}
+                  className="w-full px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg disabled:bg-blue-400 disabled:cursor-not-allowed"
                 >
-                  Add to Cart
+                  {addingToCart ? 'Adding...' : addToCartSuccess ? '✓ Added to Cart!' : 'Add to Cart'}
                 </button>
+                {addToCartSuccess && (
+                  <p className="text-green-600 text-center font-medium">
+                    Item added to cart successfully!
+                  </p>
+                )}
               </div>
             )}
 

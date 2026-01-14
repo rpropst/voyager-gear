@@ -61,3 +61,33 @@ class PasswordValidationError(HTTPException):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=detail,
         )
+
+
+class OutOfStockError(HTTPException):
+    """Exception raised when trying to add more items than available in stock."""
+
+    def __init__(self, detail: str = "Product is out of stock or insufficient quantity available"):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=detail,
+        )
+
+
+class InvalidPromoCodeError(HTTPException):
+    """Exception raised when promo code is invalid, expired, or exceeded usage limit."""
+
+    def __init__(self, detail: str = "Invalid or expired promo code"):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=detail,
+        )
+
+
+class CartNotFoundError(HTTPException):
+    """Exception raised when a cart is not found."""
+
+    def __init__(self, detail: str = "Cart not found"):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=detail,
+        )
