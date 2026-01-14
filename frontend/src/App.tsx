@@ -13,6 +13,8 @@ import ProductDetail from './pages/ProductDetail'
 import Cart from './pages/Cart'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import MiniCart from './components/cart/MiniCart'
+import { productService } from './services/product.service'
+import type { Product } from './types/product.types'
 
 
 const PRODUCTS = [
@@ -74,25 +76,49 @@ const Hero = () => (
 
 const SearchPage = () => {
   const [query, setQuery] = useState("");
-  
-  // BAD INP: Synchronous blocking loop during user input
-  const results = useMemo(() => {
-    const start = Date.now();
-    while (Date.now() - start < 200) {} // Blocking the UI thread
-    return PRODUCTS.filter(p => p.name.toLowerCase().includes(query.toLowerCase()));
-  }, [query]);
+  const [results, setResults] = useState<Product[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // BAD PERFORMANCE: API call triggered on every keystroke without debouncing
+  // This creates unnecessary network requests, potential race conditions, and poor UX
+  useEffect(() => {
+    const searchProducts = async () => {
+      if (!query) {
+        setResults([]);
+        return;
+      }
+
+      setIsSearching(true);
+      try {
+        const response = await productService.getProducts({ search: query, page_size: 20 });
+        setResults(response.products);
+      } catch (error) {
+        console.error('Search failed:', error);
+      } finally {
+        setIsSearching(false);
+      }
+    };
+
+    searchProducts();
+  }, [query]); // Triggers on every keystroke - should be debounced!
 
   return (
     <div style={{ padding: '40px' }}>
       <h2>Search Inventory</h2>
-      <input 
-        type="text" 
-        placeholder="Type to search..." 
+      <input
+        type="text"
+        placeholder="Type to search..."
         onChange={(e) => setQuery(e.target.value)}
         style={{ padding: '12px', width: '100%', maxWidth: '400px', fontSize: '16px' }}
       />
+      {isSearching && <div style={{ marginTop: '10px', color: '#666' }}>Searching...</div>}
       <div style={{ marginTop: '20px' }}>
-        {results.map(p => <div key={p.id} style={{ padding: '10px', borderBottom: '1px solid #eee' }}>{p.name}</div>)}
+        {results.map(p => (
+          <div key={p.id} style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
+            <div style={{ fontWeight: 'bold' }}>{p.name}</div>
+            <div style={{ fontSize: '14px', color: '#666' }}>${p.price.toFixed(2)}</div>
+          </div>
+        ))}
       </div>
     </div>
   );

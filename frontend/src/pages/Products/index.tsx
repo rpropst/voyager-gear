@@ -19,6 +19,9 @@ const Products: React.FC = () => {
     sort_order: 'desc',
   })
 
+  // BAD PERFORMANCE: API call triggered on every filter change including search keystrokes
+  // Search input updates filters.search on every keystroke, triggering a new API request
+  // This should be debounced to reduce unnecessary API calls
   useEffect(() => {
     const fetchProducts = async () => {
       setIsLoading(true)
@@ -44,8 +47,12 @@ const Products: React.FC = () => {
     }))
   }
 
+  // BAD PERFORMANCE: Updates filters on every keystroke without debouncing
+  // This triggers the useEffect above which makes an API call on every character typed
+  // Creates excessive API requests and poor user experience
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const search = e.target.value
+
     setFilters((prev) => ({
       ...prev,
       search: search || undefined,
