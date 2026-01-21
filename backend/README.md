@@ -62,9 +62,9 @@ python run.py
 ```
 
 The API will be available at:
-- **API**: http://localhost:5000
-- **OpenAPI Docs**: http://localhost:5000/docs
-- **ReDoc**: http://localhost:5000/redoc
+- **API**: http://localhost:5001
+- **OpenAPI Docs**: http://localhost:5001/docs
+- **ReDoc**: http://localhost:5001/redoc
 
 ## API Endpoints
 
@@ -216,7 +216,7 @@ ENVIRONMENT=development
 
 # Server
 HOST=0.0.0.0
-PORT=5000
+PORT=5001
 
 # Database
 DATABASE_URL=sqlite:///./voyager.db
@@ -286,10 +286,30 @@ The project follows:
 
 ## Troubleshooting
 
+### CORS Issues
+
+If you're experiencing CORS errors when accessing the API from your frontend:
+
+1. **Check CORS Configuration**:
+```bash
+python test_cors.py
+```
+
+2. **Update CORS Origins**: Add your frontend URL to the `CORS_ORIGINS` in `.env` or `app/config.py`:
+```env
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173
+```
+
+3. **Verify Frontend API URL**: Make sure your frontend is pointing to the correct backend URL (default: `http://localhost:5001`)
+
+4. **Check Browser Console**: Look for specific CORS error messages that indicate which origin is being blocked
+
+5. **Restart Backend Server**: After changing CORS settings, restart the server for changes to take effect
+
 ### Port Already in Use
 ```bash
-# Find and kill process using port 5000
-lsof -ti:5000 | xargs kill -9
+# Find and kill process using port 5001
+lsof -ti:5001 | xargs kill -9
 ```
 
 ### Database Locked

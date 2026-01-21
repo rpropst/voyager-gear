@@ -4,11 +4,12 @@
  */
 
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '@/hooks/useCart'
 import { useAuth } from '@/hooks/useAuth'
 
 const Cart: React.FC = () => {
+  const navigate = useNavigate()
   const { cart, guestCart, isLoading, getSubtotal, removeCartItem, updateCartItem, promoCode, applyPromoCode, removePromoCode, calculateShippingTax, shippingTax } = useCart()
   const { isAuthenticated } = useAuth()
 
@@ -338,6 +339,7 @@ const Cart: React.FC = () => {
 
               {/* Checkout Button */}
               <button
+                onClick={() => navigate('/checkout')}
                 className="w-full mt-6 px-6 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Proceed to Checkout

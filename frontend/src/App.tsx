@@ -11,6 +11,9 @@ import Account from './pages/Account'
 import Products from './pages/Products'
 import ProductDetail from './pages/ProductDetail'
 import Cart from './pages/Cart'
+import Checkout from './pages/Checkout'
+import Orders from './pages/Orders'
+import OrderDetail from './pages/OrderDetail'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import MiniCart from './components/cart/MiniCart'
 import { productService } from './services/product.service'
@@ -31,6 +34,7 @@ const Navigation = () => {
       <Link to="/" style={{ color: 'white', textDecoration: 'none', fontWeight: 'bold' }}>VOYAGER</Link>
       <Link to="/products" style={{ color: 'white', textDecoration: 'none' }}>Products</Link>
       <Link to="/search" style={{ color: 'white', textDecoration: 'none' }}>Search</Link>
+      {isAuthenticated && <Link to="/orders" style={{ color: 'white', textDecoration: 'none' }}>Orders</Link>}
 
       {/* User Account and Cart Icons */}
       <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -62,11 +66,10 @@ const Navigation = () => {
 
 const Hero = () => (
   <section>
-    {/* BAD CLS: High-res image without dimensions causes massive layout shift */}
-    <img 
-      src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=4000" 
-      alt="Adventure" 
-      style={{ width: '100%', objectFit: 'cover' }} 
+    <img
+      src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=4000"
+      alt="Adventure"
+      style={{ width: '100%', objectFit: 'cover' }}
     />
     <div style={{ padding: '40px', textAlign: 'center' }}>
       <h1>Gear Up for the Unknown</h1>
@@ -79,8 +82,6 @@ const SearchPage = () => {
   const [results, setResults] = useState<Product[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
-  // BAD PERFORMANCE: API call triggered on every keystroke without debouncing
-  // This creates unnecessary network requests, potential race conditions, and poor UX
   useEffect(() => {
     const searchProducts = async () => {
       if (!query) {
@@ -100,7 +101,7 @@ const SearchPage = () => {
     };
 
     searchProducts();
-  }, [query]); // Triggers on every keystroke - should be debounced!
+  }, [query]);
 
   return (
     <div style={{ padding: '40px' }}>
@@ -111,46 +112,32 @@ const SearchPage = () => {
         onChange={(e) => setQuery(e.target.value)}
         style={{ padding: '12px', width: '100%', maxWidth: '400px', fontSize: '16px' }}
       />
-      {isSearching && <div style={{ marginTop: '10px', color: '#666' }}>Searching...</div>}
-      <div style={{ marginTop: '20px' }}>
-        {results.map(p => (
-          <div key={p.id} style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-            <div style={{ fontWeight: 'bold' }}>{p.name}</div>
-            <div style={{ fontSize: '14px', color: '#666' }}>${p.price.toFixed(2)}</div>
-          </div>
-        ))}
-      </div>
+       {isSearching && <div style={{ marginTop: '10px', color: '#666' }}>Searching...</div>}
+       <div style={{ marginTop: '20px' }}>
+         {results.map(p => (
+           <Link 
+             key={p.id} 
+             to={`/products/${p.id}`}
+             style={{ 
+               display: 'block',
+               padding: '10px', 
+               borderBottom: '1px solid #eee',
+               textDecoration: 'none',
+               color: 'inherit',
+               transition: 'background-color 0.2s'
+             }}
+             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
+             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+           >
+             <div style={{ fontWeight: 'bold' }}>{p.name}</div>
+             <div style={{ fontSize: '14px', color: '#666' }}>${p.price.toFixed(2)}</div>
+           </Link>
+         ))}
+       </div>
     </div>
   );
 };
 
-const Checkout = () => {
-  const [processing, setProcessing] = useState(false);
-
-  const handlePurchase = async () => {
-    setProcessing(true);
-    try {
-      // Intentional Error: Calling a backend that might fail or timeout
-      const response = await fetch('http://localhost:5000/api/checkout', { method: 'POST' });
-      if (!response.ok) throw new Error("Payment Processor Unavailable");
-      alert("Order Confirmed!");
-    } catch (e) {
-      console.error("Checkout failed", e);
-      alert("An error occurred during checkout.");
-    } finally {
-      setProcessing(false);
-    }
-  };
-
-  return (
-    <div style={{ padding: '40px' }}>
-      <h2>Finalize Your Trip</h2>
-      <button onClick={handlePurchase} disabled={processing} style={{ padding: '15px 30px', background: '#e67e22', color: 'white', border: 'none' }}>
-        {processing ? "Sending..." : "Buy Now"}
-      </button>
-    </div>
-  );
-};
 
 export default function VoyagerApp() {
   return (
@@ -162,7 +149,30 @@ export default function VoyagerApp() {
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <Checkout />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders/:orderId"
+          element={
+            <ProtectedRoute>
+              <OrderDetail />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route

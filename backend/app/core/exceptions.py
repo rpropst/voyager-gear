@@ -91,3 +91,13 @@ class CartNotFoundError(HTTPException):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=detail,
         )
+
+
+class OrderNotFoundError(HTTPException):
+    """Exception raised when an order is not found."""
+
+    def __init__(self, detail: str = "Order not found"):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=detail,
+        )

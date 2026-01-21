@@ -23,6 +23,7 @@ class User(Base):
 
     # Relationships
     cart = relationship("Cart", back_populates="user", uselist=False)
+    orders = relationship("Order", back_populates="user")
 
     def __repr__(self):
         return f"<User(id={self.id}, username='{self.username}', email='{self.email}')>"

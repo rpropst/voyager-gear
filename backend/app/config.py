@@ -27,7 +27,8 @@ class Settings(BaseSettings):
     PASSWORD_MIN_LENGTH: int = 8
 
     # CORS - Allow both Vite dev server (5173) and common dev ports
-    CORS_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173"
+    # Include both localhost and 127.0.0.1 with common ports
+    CORS_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174"
 
     # Rate Limiting
     RATE_LIMIT_PER_MINUTE: int = 60

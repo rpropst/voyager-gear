@@ -8,12 +8,13 @@ import { CartProvider } from './contexts/CartProvider'
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
 
-// Setup MSW mock server in both development and production
-// Certify MSW's Service Worker is available before starting React app
+// MSW mock server disabled - using real backend API
+// Uncomment below to use mock data instead of real backend
+/*
 import('../mocks/browser')
   .then(async ({ worker }) => {
     return worker.start()
-  }) // Run <App /> when Service Worker is ready to intercept requests
+  })
   .then(() => {
     root.render(
       <AuthProvider>
@@ -23,3 +24,11 @@ import('../mocks/browser')
       </AuthProvider>,
     )
   })
+*/// Render app directly without MSW
+root.render(
+  <AuthProvider>
+    <CartProvider>
+      <VoyagerApp />
+    </CartProvider>
+  </AuthProvider>,
+)
