@@ -6,6 +6,9 @@ import { getStoredToken } from '@/utils/storage'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001'
 
+// Log API base URL for debugging
+console.log('API Base URL:', API_BASE_URL)
+
 interface RequestConfig extends RequestInit {
   requiresAuth?: boolean
 }
